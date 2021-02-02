@@ -1,0 +1,29 @@
+CXX=cl
+COMMONFLAGS= -nologo
+CXXFLAGS= -MD -c /EHsc
+INCLUDES= -Iinclude
+LFLAGS= -incremental:no -manifest:no lib/SDL2main.lib lib/SDL2.lib lib/OpenGl32.lib lib/glew32.lib -SUBSYSTEM:CONSOLE
+BUILDDIR=build
+SRCDIR=src
+SRC=$(wildcard $(SRCDIR)/*.cpp)
+_OBJ=$(SRC:.cpp=.obj)
+OBJ=$(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(_OBJ))
+TARGET=AdvGL.exe
+TARGETPATH=$(BUILDDIR)/$(TARGET)
+
+build: $(OBJ) $(TARGET)
+
+run: build
+	cd $(BUILDDIR); ./$(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CXX) $(OBJ) -Fe$(TARGETPATH) $(COMMONFLAGS) -link $(LFLAGS)
+
+
+$(BUILDDIR)/%.obj: $(SRCDIR)/%.cpp
+	$(CXX) $(INCLUDES) $(CXXFLAGS) $< -Fo$@ $(COMMONFLAGS)
+
+clean:
+	rm -f build/AdvGL*
+	rm -f build/*.o build/*.obj
+
